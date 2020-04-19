@@ -19,7 +19,7 @@ pipeline {
       stage("Build & Push"){
         steps{
           script{
-            docker.withRegistry( '', "{${REGISTRY_CREDENTIAL}" ) {
+            docker.withRegistry( '', "${REGISTRY_CREDENTIAL}" ) {
               dir("${WORKSPACE}/api/api.Dockerfile"){
                 def dockerImage = docker.build("${DOCKER_REGISTRY}:${env.BUILD_ID}")
                 dockerImage.push()
