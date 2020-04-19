@@ -6,5 +6,5 @@ RUN mvn -v
 RUN mvn clean install -DskipTests
 EXPOSE 8080
 RUN pwd
-RUN ls /target/
-ENTRYPOINT ["java","-jar","/target/spring-boot-mysql-0.0.1-SNAPSHOT.jar"]
+RUN ls ./target/
+ENTRYPOINT ["java","-jar","./target/spring-boot-mysql-0.0.1-SNAPSHOT.jar"]
