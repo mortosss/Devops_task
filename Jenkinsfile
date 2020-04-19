@@ -3,6 +3,9 @@ pipeline {
     agent any
     parameters{
         string(name: 'DOCKER_REGISTRY', defaultValue: 'mortos/egt-devops-task', description: 'Docker registry to pull the images from.')
+        string(name: 'DOCKERFILE', defaultValue: 'api.Dockerfile', description: 'Docker filename')
+        string(name: 'DOCKERPATH', defaultValue: 'api', description: 'Path to the dockerfile')
+        
     }
     environment {
         REGISTRY_CREDENTIAL = 'dockerhub'
@@ -20,8 +23,8 @@ pipeline {
         steps{
           script{
             docker.withRegistry( '', "${REGISTRY_CREDENTIAL}" ) {
-              dir("${WORKSPACE}/api/api.Dockerfile"){
-                def dockerImage = docker.build("${DOCKER_REGISTRY}:${env.BUILD_ID}")
+              dir("${WORKSPACE}/${params.DOCKERPATH}"){
+                def dockerImage = docker.build("${params.DOCKER_REGISTRY}:${env.BUILD_ID}", "-f ${params.DOCKERFILE} .")
                 dockerImage.push()
               }
             }
