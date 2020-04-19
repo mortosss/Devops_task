@@ -16,7 +16,7 @@ pipeline {
     stages {
       stage('Cloning Git') {
         steps {
-          git branch: jenkins, url: 'https://github.com/mortosss/egt_devops_task.git'
+          git branch: 'jenkins', url: 'https://github.com/mortosss/egt_devops_task.git'
         }
       }
       stage("Build & Push"){
