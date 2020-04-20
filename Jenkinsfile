@@ -48,7 +48,7 @@ pipeline {
                 if [ ?\$ -eq 0 ]; then                              
                   'The Network is already created'                
                 else                                              
-                  docker network create \${params.DOCKER_NETWORK}  
+                  docker network create ${params.DOCKER_NETWORK}  
                 fi                                                
             """)
         }
