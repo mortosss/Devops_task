@@ -66,7 +66,7 @@ pipeline {
                   docker run                   \
                   --entrypoint=''              \
                   ${params.DOCKER_REGISTRY}\"nodejsweb\":${env.BUILD_ID} \
-                  /bin/bash -c "npm-cli-login -u ${NPM_USERNAME} -p ${NPM_PASSWORD} -e test@example.com; npm publish"
+                  /bin/bash -c "npm-cli-login -u ${NPM_USERNAME} -p ${NPM_PASSWORD} -e test@example.com; npm version minor; npm publish"
                 """)
               }
             }
