@@ -44,12 +44,13 @@ pipeline {
       }
       stage("Create Docker Network"){
         steps{
-            sh(returnStdout: true, script:  """docker network ls | grep ${params.DOCKER_NETWORK}
-           if [ ?$ -eq 0 ]; then                              
-             'The Network is already created'                
-           else                                              
-             docker network create \${params.DOCKER_NETWORK}  
-           fi""")
+            sh(returnStdout: true, script:  """docker network ls | grep ${params.DOCKER_NETWORK}; 
+                if [ ?\$ -eq 0 ]; then                              
+                  'The Network is already created'                
+                else                                              
+                  docker network create \${params.DOCKER_NETWORK}  
+                fi                                                
+            """)
         }
       }
       stage("Start the DB"){
