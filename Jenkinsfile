@@ -14,6 +14,20 @@ pipeline {
     }
     stages {
       stage('Cloning Git') {
+        steps{
+         script{
+         try {
+           sh(returnStdout: true, script:  
+           """
+             docker stop db && docker rm db && docker stop NodeJSWeb && docker rm NodeJSWeb && docker stop springBootApi && docker rm springBootApi
+            """)
+         } catch(Exception RemoveContainers) {
+            println("Catching the exception");
+          }
+         }
+        }
+      }
+      stage('Cloning Git') {
         steps {
           git branch: 'jenkins', url:'https://github.com/mortosss/egt_devops_task.git'
         }
@@ -44,13 +58,12 @@ pipeline {
       }
       stage("Create Docker Network"){
         steps{
-            sh(returnStdout: true, script:  """docker network ls | grep ${params.DOCKER_NETWORK}; 
-                if [ ?\$ -eq 0 ]; then                              
-                  'The Network is already created'                
-                else                                              
-                  docker network create ${params.DOCKER_NETWORK}  
-                fi                                                
+         script{
+           sh(returnStdout: true, script:  
+           """
+             docker network create ${params.DOCKER_NETWORK}  
             """)
+         }
         }
       }
       stage("Start the DB"){
@@ -89,3 +102,4 @@ pipeline {
       }
       }
           }
+
