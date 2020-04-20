@@ -13,7 +13,7 @@ pipeline {
         timeout(time: 10, unit: 'MINUTES')
     }
     stages {
-      stage('Cloning Git') {
+      stage('Try Removing containers') {
         steps{
          script{
          try {
@@ -22,7 +22,7 @@ pipeline {
              docker stop db && docker rm db && docker stop NodeJSWeb && docker rm NodeJSWeb && docker stop springBootApi && docker rm springBootApi
             """)
          } catch(Exception RemoveContainers) {
-            println("Catching the exception");
+            println("Removing all containers failed. Some might not exist");
           }
          }
         }
@@ -59,13 +59,17 @@ pipeline {
       stage("Create Docker Network"){
         steps{
          script{
-           sh(returnStdout: true, script:  
-           """
-             docker network create ${params.DOCKER_NETWORK}  
-            """)
+            try{
+             sh(returnStdout: true, script:  
+             """
+               docker network create ${params.DOCKER_NETWORK}  
+              """)}
+            catch(Exception CreateNetwork){
+            println("Network Creation failed, the network might already exist");
+          }
+            }
          }
         }
-      }
       stage("Start the DB"){
         steps{
             sh "docker run -d \
@@ -102,4 +106,3 @@ pipeline {
       }
       }
           }
-
