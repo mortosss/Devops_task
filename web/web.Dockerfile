@@ -9,6 +9,7 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app
 
 RUN npm install
+RUN npm install -g npm-cli-login 
 # If you are building your code for production
 # RUN npm ci --only=production
 
