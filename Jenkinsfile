@@ -29,7 +29,7 @@ pipeline {
       }
       stage('Cloning Git') {
         steps {
-          git branch: 'master', url:'https://github.com/mortosss/egt_devops_task.git'
+          git branch: 'npm', url:'https://github.com/mortosss/egt_devops_task.git'
         }
       }
       stage("Build & Push the API"){
@@ -66,7 +66,7 @@ pipeline {
                   docker run                   \
                   --entrypoint=''              \
                   ${params.DOCKER_REGISTRY}\"nodejsweb\":${env.BUILD_ID} \
-                  npm-cli-login -u ${NPM_USERNAME} -p ${NPM_PASSWORD} -e test@example.com                                   
+                  /bin/bash -c "npm-cli-login -u ${NPM_USERNAME} -p ${NPM_PASSWORD} -e test@example.com; npm publish"
                 """)
               }
             }
@@ -123,4 +123,3 @@ pipeline {
       }
       }
           }
-
