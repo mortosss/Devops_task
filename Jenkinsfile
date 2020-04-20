@@ -1,17 +1,9 @@
-def withDockerNetwork(Closure inner) {
-  try {
-    networkId = UUID.randomUUID().toString()
-    sh "docker network create ${networkId}"
-    inner.call(networkId)
-  } finally {
-    sh "docker network rm ${networkId}"
-  }
-}
 pipeline {
     agent any
     parameters{
         string(name: 'DOCKER_REGISTRY', defaultValue: 'mortos/', description: 'Docker registry to pull the images from.')
         string(name: 'DOCKERFILE', defaultValue: '.Dockerfile', description: 'Docker filename')
+        string(name: 'DOCKER_NETWORK', defaultValue: 'appNetwork', description: 'Docker Network')
         
     }
     environment {
@@ -50,10 +42,20 @@ pipeline {
           }
         }
       }
+      stage("Create Docker Network"){
+        steps{
+            sh(returnStdout: true, script:  """docker network ls | grep ${params.DOCKER_NETWORK}
+           if [ ?$ -eq 0 ]; then                              
+             'The Network is already created'                
+           else                                              
+             docker network create \${params.DOCKER_NETWORK}  
+           fi""")
+        }
+      }
       stage("Start the DB"){
         steps{
             sh "docker run -d \
-                    --network=\"bridge\"                           \
+                    --network=${params.DOCKER_NETWORK}             \
                     --name=\"db\"                                  \
                     -p 3306:3306                                   \
                     -e MYSQL_RANDOM_ROOT_PASSWORD=true             \
@@ -66,21 +68,21 @@ pipeline {
       stage("Start the API"){
         steps{
             sh "docker run -d                                                 \
-                    --network=\"bridge\"                                      \
+                    --network=${params.DOCKER_NETWORK}                        \
                     --name=\"springBootApi\"                                  \
                     -v $HOME/.m2:/root/.m2                                    \
                     -p 8080:8080                                              \
-                    -e SPRING_DATASOURCE_URL=\"jdbc:mysql://localhost:3306/springboot_mysql_example?autoReconnect=true&useSSL=false\" \
+                    -e SPRING_DATASOURCE_URL=\"jdbc:mysql://db:3306/springboot_mysql_example?autoReconnect=true&useSSL=false\" \
                     ${params.DOCKER_REGISTRY}\"springbootapi\":${env.BUILD_ID}"
             }
       }
       stage("Start the Web"){
         steps{
             sh "docker run -d                                               \
-                    --network=\"bridge\"                                    \
+                    --network=${params.DOCKER_NETWORK}                      \
                     --name=\"NodeJSWeb\"                                    \
                     -p 3000:3000                                            \
-                    -e API_HOST=\"http://localhost:8080\"                   \
+                    -e API_HOST=\"http://springBootApi:8080\"               \
                     ${params.DOCKER_REGISTRY}\"nodejsweb\":${env.BUILD_ID}"
             }
       }
