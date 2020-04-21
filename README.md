@@ -2,7 +2,6 @@
 ## This is a Test NodeJS FrontEnd + Java Spring API Backend Application.
 ### The Java Backend part is hosted in the __api__ folder
 
-test
 You need Java8 (works fine with openJDK) and latest MAVEN.
 
 To build the application, you must execute:
