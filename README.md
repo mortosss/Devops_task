@@ -1,5 +1,4 @@
 # Devops Web App
-test
 ## This is a Test NodeJS FrontEnd + Java Spring API Backend Application.
 
 ### The Java Backend part is hosted in the __api__ folder
